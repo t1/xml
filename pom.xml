@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.t1</groupId>
@@ -12,11 +10,34 @@
     <description>modern api for xml documents</description>
 
     <properties>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
+    <scm>
+        <developerConnection>scm:git:https://github.com/t1/xml</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <distributionManagement>
+        <repository>
+            <id>bintray-t1-javaee-helpers</id>
+            <name>t1-javaee-helpers</name>
+            <url>https://api.bintray.com/maven/t1/javaee-helpers/xml</url>
+        </repository>
+    </distributionManagement>
+    <prerequisites>
+        <maven>3.0</maven>
+    </prerequisites>
+
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -43,6 +64,18 @@
                     <encoding>utf8</encoding>
                     <fork>true</fork>
                     <compilerArgument>-parameters</compilerArgument>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <configuration>
+                    <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
             </plugin>
         </plugins>
