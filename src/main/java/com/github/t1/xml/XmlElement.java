@@ -21,6 +21,20 @@ public class XmlElement {
         void add(XmlElement node, XmlElement relativeTo);
     }
 
+    public static XmlPosition atBegin() {
+        return (node, relativeTo) -> {
+            List<XmlElement> siblings = relativeTo.getChildNodes();
+            if (siblings.isEmpty()) {
+                relativeTo.addIndent();
+                relativeTo.append(node.element);
+            } else {
+                XmlElement reference = siblings.get(0);
+                relativeTo.element.insertBefore(node.element, reference.element);
+                relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference.element);
+            }
+        };
+    }
+
     public static XmlPosition atEnd() {
         return (node, relativeTo) -> {
             relativeTo.addIndent();
