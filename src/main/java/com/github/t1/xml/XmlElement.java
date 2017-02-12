@@ -154,6 +154,8 @@ public class XmlElement {
         return list((NodeList) expr.evaluate(element, NODESET));
     }
 
+    public Optional<XmlElement> getOptionalElement(String path) { return getOptionalElement(Paths.get(path)); }
+
     public Optional<XmlElement> getOptionalElement(Path path) {
         Element node = element;
         for (Path pathElement : path) {
