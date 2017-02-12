@@ -50,6 +50,13 @@ public class XmlElement {
         };
     }
 
+    public static XmlPosition before(XmlElement reference) {
+        return (node, relativeTo) -> {
+            relativeTo.element.insertBefore(node.element, reference.element);
+            relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference.element);
+        };
+    }
+
 
     private final XmlElement parent;
     protected final Element element;
@@ -265,6 +272,17 @@ public class XmlElement {
         // i.e. finalText may be null so the new text is inserted before the closing tag
         element.insertBefore(createText(string), finalText);
         return this;
+    }
+
+    public String getText() {
+        return element.getTextContent();
+    }
+
+    public void remove() {
+        Node parent = element.getParentNode();
+        Node indent = element.getPreviousSibling();
+        parent.removeChild(element);
+        parent.removeChild(indent);
     }
 
     public URI uri() { return URI.create(parent.uri() + uriDelimiter() + getName() + id()); }
