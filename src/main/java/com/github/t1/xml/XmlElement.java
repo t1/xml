@@ -252,6 +252,8 @@ public class XmlElement {
 
     private Text createText(String text) { return document().createTextNode(text); }
 
+    public XmlElement removeAttribute(String name) { return setAttribute(name, null); }
+
     public XmlElement setAttribute(String name, String value) {
         if (value == null)
             element.removeAttribute(name);
