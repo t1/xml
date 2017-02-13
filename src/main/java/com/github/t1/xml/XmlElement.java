@@ -1,6 +1,5 @@
 package com.github.t1.xml;
 
-import com.google.common.collect.ImmutableList;
 import lombok.*;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.*;
@@ -104,7 +103,7 @@ public class XmlElement {
     public List<XmlElement> elements() { return list(element.getChildNodes()); }
 
     private List<XmlElement> list(NodeList childNodes) {
-        ImmutableList.Builder<XmlElement> result = ImmutableList.builder();
+        List<XmlElement> result = new ArrayList<>();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node child = childNodes.item(i);
             if (child instanceof Element) {
@@ -112,26 +111,26 @@ public class XmlElement {
                 result.add(newChildXmlElement(element));
             }
         }
-        return result.build();
+        return Collections.unmodifiableList(result);
     }
 
     private XmlElement newChildXmlElement(Element e) { return new XmlElement(this, e, indent + 1); }
 
-    public ImmutableList<Path> elementPaths() {
-        ImmutableList.Builder<Path> result = ImmutableList.builder();
+    public List<Path> elementPaths() {
+        List<Path> result = new ArrayList<>();
         for (XmlElement element : getChildNodes()) {
             result.add(element.getPath());
         }
-        return result.build();
+        return Collections.unmodifiableList(result);
     }
 
     private List<XmlElement> getChildNodes() {
-        ImmutableList.Builder<XmlElement> result = ImmutableList.builder();
+        List<XmlElement> result = new ArrayList<>();
         addChildNodes(element.getChildNodes(), result);
-        return result.build();
+        return Collections.unmodifiableList(result);
     }
 
-    private void addChildNodes(NodeList childNodes, ImmutableList.Builder<XmlElement> result) {
+    private void addChildNodes(NodeList childNodes, List<XmlElement> result) {
         list(childNodes).forEach(e -> {
             result.add(e);
             addChildNodes(e.element.getChildNodes(), result);
