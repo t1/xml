@@ -13,11 +13,10 @@ import java.util.*;
 
 import static javax.xml.xpath.XPathConstants.*;
 
-@EqualsAndHashCode
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class XmlElement {
+@EqualsAndHashCode(callSuper = true)
+public class XmlElement extends XmlNode {
     public interface XmlPosition {
-        void add(XmlElement node, XmlElement relativeTo);
+        void add(XmlNode node, XmlElement relativeTo);
     }
 
     public static XmlPosition atBegin() {
@@ -25,10 +24,10 @@ public class XmlElement {
             List<XmlElement> siblings = relativeTo.getChildNodes();
             if (siblings.isEmpty()) {
                 relativeTo.addIndent();
-                relativeTo.append(node.element);
+                relativeTo.append(node.node);
             } else {
                 XmlElement reference = siblings.get(0);
-                relativeTo.element.insertBefore(node.element, reference.element);
+                relativeTo.element.insertBefore(node.node, reference.element);
                 relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference.element);
             }
         };
@@ -37,21 +36,21 @@ public class XmlElement {
     public static XmlPosition atEnd() {
         return (node, relativeTo) -> {
             relativeTo.addIndent();
-            relativeTo.append(node.element);
+            relativeTo.append(node.node);
         };
     }
 
     public static XmlPosition before(String xpath) {
         return (node, relativeTo) -> {
             XmlElement reference = relativeTo.getXPathElement(xpath);
-            relativeTo.element.insertBefore(node.element, reference.element);
+            relativeTo.element.insertBefore(node.node, reference.element);
             relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference.element);
         };
     }
 
     public static XmlPosition before(XmlElement reference) {
         return (node, relativeTo) -> {
-            relativeTo.element.insertBefore(node.element, reference.element);
+            relativeTo.element.insertBefore(node.node, reference.element);
             relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference.element);
         };
     }
@@ -66,7 +65,13 @@ public class XmlElement {
     /** The text before the closing tag. Everything else goes before this. */
     private Text finalText;
 
-    protected Document document() { return element.getOwnerDocument(); }
+    protected XmlElement(XmlElement parent, Element element, int indent) {
+        super(parent, element);
+        this.parent = parent;
+        this.element = element;
+        this.indent = indent;
+    }
+
 
     public String getName() { return element.getNodeName(); }
 
@@ -108,13 +113,13 @@ public class XmlElement {
             Node child = childNodes.item(i);
             if (child instanceof Element) {
                 Element element = (Element) child;
-                result.add(newChildXmlElement(element));
+                result.add(createChildElement(element));
             }
         }
         return Collections.unmodifiableList(result);
     }
 
-    private XmlElement newChildXmlElement(Element e) { return new XmlElement(this, e, indent + 1); }
+    private XmlElement createChildElement(Element e) { return new XmlElement(this, e, indent + 1); }
 
     public List<Path> elementPaths() {
         List<Path> result = new ArrayList<>();
@@ -198,7 +203,7 @@ public class XmlElement {
     public XmlElement getOrCreateElement(String name, XmlPosition position) {
         NodeList list = element.getElementsByTagName(name);
         if (list.getLength() >= 1)
-            return newChildXmlElement((Element) list.item(0));
+            return createChildElement((Element) list.item(0));
         return addElement(name, position);
     }
 
@@ -213,12 +218,16 @@ public class XmlElement {
     public XmlElement addElement(String name) { return addElement(name, atEnd()); }
 
     public XmlElement addElement(String name, XmlPosition position) {
-        XmlElement node = newChildXmlElement(document().createElement(name));
+        XmlElement node = createChildElement(createElement(name));
         position.add(node, this);
         return node;
     }
 
-    private void append(Node node) { element.insertBefore(node, finalText()); }
+    void add(Node node, XmlPosition position) { position.add(createChildNode(node), this); }
+
+    private XmlNode createChildNode(Node node) { return new XmlNode(this, node); }
+
+    void append(Node node) { element.insertBefore(node, finalText()); }
 
     private Text finalText() {
         if (finalText == null) {
@@ -234,7 +243,7 @@ public class XmlElement {
         return finalText;
     }
 
-    private void addIndent() { element.insertBefore(createText(indentString()), finalText()); }
+    void addIndent() { element.insertBefore(createText(indentString()), finalText()); }
 
     private String indentString() {
         if (indentString == null)
@@ -250,8 +259,6 @@ public class XmlElement {
         return builder.toString();
     }
 
-    private Text createText(String text) { return document().createTextNode(text); }
-
     public XmlElement removeAttribute(String name) { return setAttribute(name, null); }
 
     public XmlElement setAttribute(String name, String value) {
@@ -262,9 +269,14 @@ public class XmlElement {
         return this;
     }
 
+    public XmlElement addComment(String text, XmlPosition position) {
+        position.add(createChildNode(createComment(text)), this);
+        return this;
+    }
+
     public XmlElement addComment(String text) {
         addIndent();
-        append(document().createComment(" " + text + " "));
+        append(createComment(text));
         return this;
     }
 
