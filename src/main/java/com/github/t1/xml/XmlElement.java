@@ -10,8 +10,10 @@ import java.io.*;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.*;
+import java.util.function.Predicate;
 
 import static javax.xml.xpath.XPathConstants.*;
+import static org.w3c.dom.Node.*;
 
 @EqualsAndHashCode(callSuper = true)
 public class XmlElement extends XmlNode {
@@ -21,14 +23,14 @@ public class XmlElement extends XmlNode {
 
     public static XmlPosition atBegin() {
         return (node, relativeTo) -> {
-            List<XmlElement> siblings = relativeTo.getChildNodes();
-            if (siblings.isEmpty()) {
+            NodeList siblings = relativeTo.element.getChildNodes();
+            if (siblings.getLength() == 0) {
                 relativeTo.addIndent();
                 relativeTo.append(node.node);
             } else {
-                XmlElement reference = siblings.get(0);
-                relativeTo.element.insertBefore(node.node, reference.element);
-                relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference.element);
+                Node reference = siblings.item(0);
+                relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference);
+                relativeTo.element.insertBefore(node.node, reference);
             }
         };
     }
@@ -90,6 +92,8 @@ public class XmlElement extends XmlNode {
             out = buildPath(parentNode, out);
         return out.resolve(e.getNodeName());
     }
+
+    public boolean hasId() { return hasAttribute("id"); }
 
     public boolean hasAttribute(String name) { return !element.getAttribute(name).isEmpty(); }
 
@@ -161,18 +165,34 @@ public class XmlElement extends XmlNode {
     public Optional<XmlElement> getOptionalElement(String path) { return getOptionalElement(Paths.get(path)); }
 
     public Optional<XmlElement> getOptionalElement(Path path) {
+        int resultIndent = this.indent;
         Element node = element;
         for (Path pathElement : path) {
-            NodeList elements = node.getElementsByTagName(pathElement.toString());
-            if (elements.getLength() == 0)
+            List<Node> elements = elementsIn(node.getChildNodes(), e -> e.getTagName().equals(pathElement.toString()));
+            if (elements.isEmpty())
                 return Optional.empty();
-            if (elements.getLength() > 1)
-                throw new IllegalArgumentException("found " + elements.getLength() + " elements '" + pathElement
+            if (elements.size() > 1)
+                throw new IllegalArgumentException("found " + elements.size() + " elements '" + pathElement
                         + "' in '" + getPath() + "'");
-            node = (Element) elements.item(0);
+            node = (Element) elements.get(0);
+            resultIndent++;
         }
-        return Optional.ofNullable(node).map(e -> new XmlElement(this, e, indent));
+        if (node == null)
+            return Optional.empty();
+        return Optional.of(new XmlElement(this, node, resultIndent));
     }
+
+    private List<Node> elementsIn(NodeList nodeList, Predicate<Element> predicate) {
+        List<Node> result = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == ELEMENT_NODE && predicate.test((Element) node))
+                result.add(node);
+        }
+        return result;
+    }
+
+    public boolean hasChildElement(String path) { return hasChildElement(Paths.get(path)); }
 
     public boolean hasChildElement(Path path) {
         return getOptionalElement(path).filter(e -> hasChildElements(e.element)).isPresent();
@@ -221,6 +241,11 @@ public class XmlElement extends XmlNode {
         XmlElement node = createChildElement(createElement(name));
         position.add(node, this);
         return node;
+    }
+
+    public void addNode(XmlNode node) {
+        addIndent();
+        append(document().importNode(node.node, true));
     }
 
     void add(Node node, XmlPosition position) { position.add(createChildNode(node), this); }
