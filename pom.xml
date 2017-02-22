@@ -1,43 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <!-- WARNING: Do Not Modify This File! -->
+    <!-- Generated from pomx.xml -->
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.t1</groupId>
     <artifactId>xml</artifactId>
-    <version>0.0.6-SNAPSHOT</version>
-
+    <version>0.0.5-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>xml</name>
     <description>modern api for xml documents</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-
-    <scm>
-        <developerConnection>scm:git:https://github.com/t1/xml</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <distributionManagement>
-        <repository>
-            <id>bintray-t1-javaee-helpers</id>
-            <name>t1-javaee-helpers</name>
-            <url>https://api.bintray.com/maven/t1/javaee-helpers/xml/;publish=1</url>
-        </repository>
-    </distributionManagement>
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -81,33 +59,94 @@
         </plugins>
     </build>
 
-    <dependencies>
-        <!-- provided scope -->
+    <distributionManagement>
+        <repository>
+            <id>bintray-t1-javaee-helpers</id>
+            <name>t1-javaee-helpers</name>
+            <url>https://api.bintray.com/maven/t1/javaee-helpers/${project.artifactId}/;publish=1</url>
+        </repository>
+    </distributionManagement>
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>bintray</name>
+            <url>http://jcenter.bintray.com</url>
+        </repository>
+    </repositories>
+    <scm>
+        <developerConnection>scm:git:https://github.com/t1/${project.artifactId}</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <profiles>
+        <profile>
+            <id>com.github.t1:profile-t1</id>
+            <activation>
+                <property>
+                    <name>user.dir</name>
+                </property>
+            </activation>
+            <properties>
+                <com.github.t1.profile-t1.version>1.0.0-SNAPSHOT</com.github.t1.profile-t1.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+            <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <rulesUri>
+                        ${session.localRepository.url}/com/github/t1/profile-t1/${com.github.t1.profile-t1.version}/profile-t1-${com.github.t1.profile-t1.version}.rules.xml
+                    </rulesUri>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+            <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.8</version>
+            <version>1.16.12</version>
             <scope>provided</scope>
-            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>15.0</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- test scope -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.7.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.8</version>
+            <version>3.6.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+        </profile>
+    </profiles>
 </project>
