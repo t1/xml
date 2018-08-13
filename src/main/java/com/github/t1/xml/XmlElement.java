@@ -1,19 +1,33 @@
 package com.github.t1.xml;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import org.w3c.dom.CharacterData;
-import org.w3c.dom.*;
-import org.w3c.dom.ls.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 
-import javax.xml.xpath.*;
-import java.io.*;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URI;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
-import static javax.xml.xpath.XPathConstants.*;
-import static org.w3c.dom.Node.*;
+import static javax.xml.xpath.XPathConstants.NODESET;
+import static org.w3c.dom.Node.ELEMENT_NODE;
 
 @EqualsAndHashCode(callSuper = true)
 public class XmlElement extends XmlNode {
@@ -152,7 +166,7 @@ public class XmlElement extends XmlNode {
             throw new IllegalArgumentException("no element found: " + xpath);
         if (list.size() > 1)
             throw new IllegalArgumentException("xpath expression resolves to " + list.size() + " elements, "
-                    + "not a single element: " + xpath);
+                + "not a single element: " + xpath);
         return list.get(0);
     }
 
@@ -173,7 +187,7 @@ public class XmlElement extends XmlNode {
                 return Optional.empty();
             if (elements.size() > 1)
                 throw new IllegalArgumentException("found " + elements.size() + " elements '" + pathElement
-                        + "' in '" + getPath() + "'");
+                    + "' in '" + getPath() + "'");
             node = (Element) elements.get(0);
             resultIndent++;
         }
@@ -221,10 +235,7 @@ public class XmlElement extends XmlNode {
     public XmlElement getOrCreateElement(String name) { return getOrCreateElement(name, atEnd()); }
 
     public XmlElement getOrCreateElement(String name, XmlPosition position) {
-        NodeList list = element.getElementsByTagName(name);
-        if (list.getLength() >= 1)
-            return createChildElement((Element) list.item(0));
-        return addElement(name, position);
+        return getOptionalElement(name).orElseGet(() -> addElement(name, position));
     }
 
     public XmlElement addElement(Path path) {
@@ -334,9 +345,9 @@ public class XmlElement extends XmlNode {
     @Override
     public String toString() {
         return getClass().getSimpleName() //
-                + "[" + document().getDocumentURI() + "]"
-                + "[" + getName() + (hasAttribute("id") ? ("@" + getAttribute("id")) : "") + "]\n" //
-                + toXmlString();
+            + "[" + document().getDocumentURI() + "]"
+            + "[" + getName() + (hasAttribute("id") ? ("@" + getAttribute("id")) : "") + "]\n" //
+            + toXmlString();
     }
 
     public String toXmlString() {
