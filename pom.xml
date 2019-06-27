@@ -60,7 +60,7 @@
                 <maven.compiler.source>1.8</maven.compiler.source>
                 <maven.compiler.target>1.8</maven.compiler.target>
                 <junit.version>5.4.2</junit.version>
-                <mockito.version>2.28.1</mockito.version>
+                <mockito.version>2.28.2</mockito.version>
             </properties>
             <build>
                 <defaultGoal>install</defaultGoal>
@@ -97,8 +97,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.specification.version}</source>
-                    <target>${java.specification.version}</target>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
                     <encoding>utf8</encoding>
@@ -125,9 +123,11 @@
                         </goals>
                         <configuration>
                             <rules>
-                                <banVunerableDependencies implementation="org.sonatype.ossindex.maven.enforcer.BanVulnerableDependencies"/>
+                                <banVunerableDependencies implementation="org.sonatype.ossindex.maven.enforcer.BanVulnerableDependencies">
+                                    <scope>compile,runtime</scope>
+                                </banVunerableDependencies>
                                 <requireMavenVersion>
-                                    <version>3.5.2</version>
+                                    <version>3.6.1</version>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
@@ -138,19 +138,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.2.3</version>
-                <configuration>
-                    <archive>
-                        <addMavenDescriptor>false</addMavenDescriptor>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                    </archive>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
