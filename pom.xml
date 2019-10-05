@@ -49,9 +49,7 @@
         <profile>
             <id>com.github.t1:profile-t1</id>
             <activation>
-                <property>
-                    <name>user.dir</name>
-                </property>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
                 <com.github.t1.profile-t1.version>1.0.0-SNAPSHOT</com.github.t1.profile-t1.version>
@@ -59,11 +57,11 @@
                 <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
                 <maven.compiler.source>1.8</maven.compiler.source>
                 <maven.compiler.target>1.8</maven.compiler.target>
-                <junit.version>5.5.1</junit.version>
-                <mockito.version>3.0.0</mockito.version>
+                <junit.version>5.5.2</junit.version>
+                <mockito.version>3.1.0</mockito.version>
             </properties>
             <build>
-                <defaultGoal>install</defaultGoal>
+                <defaultGoal>verify</defaultGoal>
                 <finalName>${project.artifactId}</finalName>
                 <resources>
             <resource>
@@ -177,7 +175,7 @@
                 <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.8</version>
+            <version>1.18.10</version>
             <scope>provided</scope>
         </dependency>
                 <dependency>
@@ -194,7 +192,7 @@
         </dependency>
                 <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
@@ -213,7 +211,7 @@
                 <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.13.1</version>
+            <version>3.13.2</version>
             <scope>test</scope>
         </dependency>
             </dependencies>
