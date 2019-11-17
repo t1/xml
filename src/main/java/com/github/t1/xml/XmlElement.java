@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.sun.org.apache.xerces.internal.impl.Constants.DOM_XMLDECL;
 import static java.lang.Boolean.FALSE;
 import static javax.xml.xpath.XPathConstants.NODESET;
 import static org.w3c.dom.Node.ELEMENT_NODE;
@@ -363,7 +362,7 @@ public class XmlElement extends XmlNode {
         // see https://bugs.openjdk.java.net/browse/JDK-7150637
         append(writer, "<?xml version=\"" + document().getXmlVersion() + "\" encoding=\"UTF-8\"?>\n");
         LSSerializer serializer = serializer();
-        serializer.getDomConfig().setParameter(DOM_XMLDECL, FALSE);
+        serializer.getDomConfig().setParameter("xml-declaration", FALSE);
         serializer.write(element, createOutput(writer));
         nl(writer);
     }
