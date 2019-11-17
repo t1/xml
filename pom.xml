@@ -82,6 +82,9 @@
                 <version>2.7</version>
                 <configuration>
                     <rulesUri>
+                        <!-- when removing the dependency on pomx, use this instead: -->
+                        <!-- https://raw.githubusercontent.com/t1/pomx-profile-t1/master/src/maven-versions-rules.xml -->
+                        <!--suppress UnresolvedMavenProperty -->
                         ${session.localRepository.url}/com/github/t1/profile-t1/${com.github.t1.profile-t1.version}/profile-t1-${com.github.t1.profile-t1.version}.rules.xml
                     </rulesUri>
                 </configuration>
@@ -170,6 +173,11 @@
                 <configuration>
                     <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
             </plugin>
         </plugins>
             </build>

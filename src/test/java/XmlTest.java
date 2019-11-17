@@ -17,9 +17,9 @@ class XmlTest {
         val xml = Xml.createWithRootElement("root");
         xml.addComment("my-comment");
         xml.getOrCreateElement("elem")
-                .setAttribute("attr", "val")
-                .addText("foo")
-                .addText("bar");
+            .setAttribute("attr", "val")
+            .addText("foo")
+            .addText("bar");
         return xml;
     }
 
@@ -38,6 +38,6 @@ class XmlTest {
         assertThat(actual.toXmlString()).isEqualTo(XML);
         assertThat(actual.uri()).isEqualTo(URL.toURI());
         assertThat(actual.uri().toString())
-                .isEqualTo("file:" + System.getProperty("user.dir") + "/target/test-classes/sample.xml");
+            .isEqualTo("file:" + System.getProperty("user.dir") + "/target/test-classes/sample.xml");
     }
 }

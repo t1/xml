@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static com.sun.org.apache.xerces.internal.impl.Constants.DOM_XMLDECL;
+import static java.lang.Boolean.FALSE;
 import static javax.xml.xpath.XPathConstants.NODESET;
 import static org.w3c.dom.Node.ELEMENT_NODE;
 
@@ -102,7 +104,7 @@ public class XmlElement extends XmlNode {
 
     private Path buildPath(Node e, Path out) {
         Node parentNode = e.getParentNode();
-        if (parentNode != null && parentNode instanceof Element)
+        if (parentNode instanceof Element)
             out = buildPath(parentNode, out);
         return out.resolve(e.getNodeName());
     }
@@ -357,7 +359,12 @@ public class XmlElement extends XmlNode {
     }
 
     public void writeTo(Writer writer) {
-        serializer().write(element, createOutput(writer));
+        // we write the `<?xml ...` declaration manually, as the OpenJDK serializer doesn't append a nl!
+        // see https://bugs.openjdk.java.net/browse/JDK-7150637
+        append(writer, "<?xml version=\"" + document().getXmlVersion() + "\" encoding=\"UTF-8\"?>\n");
+        LSSerializer serializer = serializer();
+        serializer.getDomConfig().setParameter(DOM_XMLDECL, FALSE);
+        serializer.write(element, createOutput(writer));
         nl(writer);
     }
 
@@ -377,8 +384,12 @@ public class XmlElement extends XmlNode {
     }
 
     private void nl(Writer writer) {
+        append(writer, "\n");
+    }
+
+    private void append(Writer writer, String text) {
         try {
-            writer.append('\n');
+            writer.append(text);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
