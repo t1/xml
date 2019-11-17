@@ -7,13 +7,4 @@
     <description>modern api for xml documents</description>
 
     <profile>com.github.t1:profile-t1:1.0.0-SNAPSHOT</profile>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
-            </plugin>
-        </plugins>
-    </build>
 </project>

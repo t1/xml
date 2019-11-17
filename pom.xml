@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="urn:xsd:maven:pomx:5.0.0">
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <!-- WARNING: Do Not Modify This File! -->
     <!-- Generated from pomx.xml -->
     <modelVersion>4.0.0</modelVersion>
@@ -10,15 +13,6 @@
     <packaging>jar</packaging>
     <name>xml</name>
     <description>modern api for xml documents</description>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
-            </plugin>
-        </plugins>
-    </build>
 
     <distributionManagement>
         <repository>
@@ -135,6 +129,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
+                <configuration>
+                    <includes>
+                        <include>*Test</include>
+                        <include>*Behavior</include>
+                    </includes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -183,7 +183,7 @@
                 <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>17.0.0</version>
+            <version>18.0.0</version>
             <scope>provided</scope>
         </dependency>
                 <dependency>
