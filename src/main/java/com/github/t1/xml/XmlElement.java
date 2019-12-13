@@ -21,12 +21,12 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import static java.lang.Boolean.FALSE;
+import static java.util.Collections.unmodifiableList;
 import static javax.xml.xpath.XPathConstants.NODESET;
 import static org.w3c.dom.Node.ELEMENT_NODE;
 
@@ -135,7 +135,7 @@ public class XmlElement extends XmlNode {
                 result.add(createChildElement(element));
             }
         }
-        return Collections.unmodifiableList(result);
+        return unmodifiableList(result);
     }
 
     private XmlElement createChildElement(Element e) { return new XmlElement(this, e, indent + 1); }
@@ -145,13 +145,13 @@ public class XmlElement extends XmlNode {
         for (XmlElement element : getChildNodes()) {
             result.add(element.getPath());
         }
-        return Collections.unmodifiableList(result);
+        return unmodifiableList(result);
     }
 
     private List<XmlElement> getChildNodes() {
         List<XmlElement> result = new ArrayList<>();
         addChildNodes(element.getChildNodes(), result);
-        return Collections.unmodifiableList(result);
+        return unmodifiableList(result);
     }
 
     private void addChildNodes(NodeList childNodes, List<XmlElement> result) {
