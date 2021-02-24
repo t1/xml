@@ -326,6 +326,11 @@ public class XmlElement extends XmlNode {
         return this;
     }
 
+    public XmlElement setText(String string) {
+        element.setTextContent(string);
+        return this;
+    }
+
     public String getText() {
         return element.getTextContent();
     }
