@@ -10,6 +10,7 @@
     <packaging>jar</packaging>
     <name>xml</name>
     <description>modern api for xml documents</description>
+    <url>https://github.com/t1/xml</url>
 
     <distributionManagement>
         <repository>
@@ -29,16 +30,10 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    <repositories>
-        <repository>
-            <id>jcenter</id>
-            <name>jcenter</name>
-            <url>https://jcenter.bintray.com</url>
-        </repository>
-    </repositories>
     <scm>
-        <developerConnection>scm:git:https://github.com/t1/${project.artifactId}</developerConnection>
+        <developerConnection>scm:git:https://github.com/t1/xml.git</developerConnection>
         <tag>HEAD</tag>
+        <url>https://github.com/t1/xml.git</url>
     </scm>
     <profiles>
         <profile>
