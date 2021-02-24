@@ -60,8 +60,7 @@ public class XmlElement extends XmlNode {
     public static XmlPosition before(String xpath) {
         return (node, relativeTo) -> {
             XmlElement reference = relativeTo.getXPathElement(xpath);
-            relativeTo.element.insertBefore(node.node, reference.element);
-            relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference.element);
+            before(reference).add(node, relativeTo);
         };
     }
 
@@ -69,6 +68,27 @@ public class XmlElement extends XmlNode {
         return (node, relativeTo) -> {
             relativeTo.element.insertBefore(node.node, reference.element);
             relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference.element);
+        };
+    }
+
+    public Optional<XmlPosition> beforeExisting(String xpath) {
+        return getOptionalElement(xpath).map(p -> before(xpath));
+    }
+
+    public Optional<XmlPosition> afterExisting(String xpath) {
+        return getOptionalElement(xpath).map(p -> after(xpath));
+    }
+
+    public static XmlPosition after(String xpath) {
+        return (node, relativeTo) -> {
+            XmlElement reference = relativeTo.getXPathElement(xpath);
+            if (reference.element.getNextSibling() != null) {
+                relativeTo.element.insertBefore(node.node, reference.element.getNextSibling());
+                relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference.element.getNextSibling());
+            } else {
+                relativeTo.addIndent();
+                relativeTo.append(node.node);
+            }
         };
     }
 
