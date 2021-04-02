@@ -6,7 +6,7 @@
 
     <groupId>com.github.t1</groupId>
     <artifactId>xml</artifactId>
-    <version>0.0.9-SNAPSHOT</version>
+    <version>0.0.9</version>
     <packaging>jar</packaging>
     <name>xml</name>
     <description>modern api for xml documents</description>
@@ -38,7 +38,7 @@
     </developers>
     <scm>
         <developerConnection>scm:git:https://github.com/t1/${project.artifactId}.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v0.0.9</tag>
         <url>https://github.com/t1/${project.artifactId}.git</url>
     </scm>
     <profiles>
