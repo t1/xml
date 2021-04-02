@@ -5,6 +5,7 @@
     <jar>com.github.t1:xml:0.0.6-SNAPSHOT</jar>
     <name>xml</name>
     <description>modern api for xml documents</description>
+    <url>https://github.com/t1/xml</url>
 
     <profile>com.github.t1:profile-t1:1.0.0-SNAPSHOT</profile>
 </project>
