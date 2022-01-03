@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <!-- WARNING: Do Not Modify This File! -->
     <!-- Generated from pomx.xml -->
     <modelVersion>4.0.0</modelVersion>
@@ -261,9 +261,9 @@
             <id>release</id>
             <build>
                 <plugins>
-                    <!-- always run source+javadoc => see problems early & source available in local repo -->
+                    <!-- always run source+javadoc (above) => see problems early & source available in local repo -->
+                    <!-- but don't run gpg everywhere, esp. not in GitHub Actions -->
                     <plugin>
-                        <!-- but don't run gpg everywhere, esp. not in github actions -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>3.0.1</version>
@@ -276,6 +276,13 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <!-- This is necessary for gpg to not try to use the pinentry programs in a GitHub Action -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
