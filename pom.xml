@@ -53,8 +53,9 @@
                 <com.github.t1.profile-t1.version>1.0.0-SNAPSHOT</com.github.t1.profile-t1.version>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
                 <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-                <maven.compiler.source>1.8</maven.compiler.source>
-                <maven.compiler.target>1.8</maven.compiler.target>
+                <maven.compiler.source>11</maven.compiler.source>
+                <maven.compiler.target>11</maven.compiler.target>
+                <maven.compiler.parameters>true</maven.compiler.parameters>
                 <junit.version>5.7.1</junit.version>
                 <mockito.version>3.8.0</mockito.version>
             </properties>
@@ -265,7 +266,7 @@
                         <!-- but don't run gpg everywhere, esp. not in github actions -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
