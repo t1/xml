@@ -2,7 +2,7 @@
 <project xmlns="urn:xsd:maven:pomx:5.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="urn:xsd:maven:pomx:5.0.0 https://raw.githubusercontent.com/t1/pomx/master/src/main/resources/schemas/pomx-5.0.0.xsd">
 
-    <jar>com.github.t1:xml:0.0.12-SNAPSHOT</jar>
+    <jar>com.github.t1:xml:0.0.13-SNAPSHOT</jar>
     <name>xml</name>
     <description>modern api for xml documents</description>
     <url>https://github.com/t1/xml</url>
