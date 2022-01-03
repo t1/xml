@@ -1,4 +1,5 @@
-# xml
+# xml [![Maven-Central](https://maven-badges.herokuapp.com/maven-central/com.github.t1/xml/badge.svg)](https://search.maven.org/artifact/com.github.t1/xml)
+
 modern api for xml documents
 
 Xml has a bad reputation for being complex. Part of that reputation comes from the APIs you have to use to work with it.
