@@ -1,9 +1,12 @@
 package com.github.t1.xml;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.SneakyThrows;
+import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -11,7 +14,7 @@ import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 
-import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
@@ -93,6 +96,7 @@ public class XmlElement extends XmlNode {
     }
 
 
+    @Getter
     private final XmlElement parent;
     protected final Element element;
     private final int indent;
@@ -150,9 +154,8 @@ public class XmlElement extends XmlNode {
         List<XmlElement> result = new ArrayList<>();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node child = childNodes.item(i);
-            if (child instanceof Element) {
-                Element element = (Element) child;
-                result.add(createChildElement(element));
+            if (child instanceof Element e) {
+                result.add(createChildElement(e));
             }
         }
         return unmodifiableList(result);
@@ -193,8 +196,8 @@ public class XmlElement extends XmlNode {
 
     @SneakyThrows(XPathExpressionException.class)
     public List<XmlElement> find(String xpath) {
-        XPathExpression expr = XPathFactory.newInstance().newXPath().compile(xpath);
-        return list((NodeList) expr.evaluate(element, NODESET));
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        return list((NodeList) xPath.evaluate(xpath, element, NODESET));
     }
 
     public Optional<XmlElement> getOptionalElement(String path) { return getOptionalElement(Paths.get(path)); }
@@ -203,7 +206,7 @@ public class XmlElement extends XmlNode {
         int resultIndent = this.indent;
         Element node = element;
         for (Path pathElement : path) {
-            List<Node> elements = elementsIn(node.getChildNodes(), e -> e.getTagName().equals(pathElement.toString()));
+            List<Node> elements = elementsIn(node.getChildNodes(), e -> pathElement.toString().equals(e.getLocalName() != null ? e.getLocalName() : e.getTagName()));
             if (elements.isEmpty())
                 return Optional.empty();
             if (elements.size() > 1)
@@ -277,7 +280,28 @@ public class XmlElement extends XmlNode {
 
     public void addNode(XmlNode node) {
         addIndent();
-        append(document().importNode(node.node, true));
+        // re-create the node in this element's namespace, so moved nodes don't carry their old
+        // default namespace as xmlns attributes on every child
+        append(adopt(node.node));
+    }
+
+    private Node adopt(Node node) {
+        String namespaceURI = element.getNamespaceURI();
+        if (node instanceof Element e && namespaceURI != null && !namespaceURI.equals(node.getNamespaceURI())) {
+            // non-namespace-aware elements have no local name; fall back to the tag name
+            String localName = e.getLocalName() != null ? e.getLocalName() : e.getTagName();
+            Element copy = document().createElementNS(namespaceURI, localName);
+            NamedNodeMap attributes = e.getAttributes();
+            for (int i = 0; i < attributes.getLength(); i++) {
+                Attr attr = (Attr) attributes.item(i);
+                if (!attr.getName().startsWith("xmlns"))
+                    copy.setAttribute(attr.getName(), attr.getValue());
+            }
+            for (Node child = e.getFirstChild(); child != null; child = child.getNextSibling())
+                copy.appendChild(adopt(child));
+            return copy;
+        }
+        return document().importNode(node, true);
     }
 
     void add(Node node, XmlPosition position) { position.add(createChildNode(node), this); }
@@ -309,20 +333,22 @@ public class XmlElement extends XmlNode {
     }
 
     private String indentString(int n) {
-        StringBuilder builder = new StringBuilder("\n");
-        for (int i = 0; i < n; i++) {
-            builder.append("    ");
-        }
-        return builder.toString();
+        return "\n" + "    ".repeat(Math.max(0, n));
     }
 
     public XmlElement removeAttribute(String name) { return setAttribute(name, null); }
 
     public XmlElement setAttribute(String name, String value) {
-        if (value == null)
+        if (value == null) {
             element.removeAttribute(name);
-        else
+        } else if (name.equals("xmlns") || name.startsWith("xmlns:")) {
+            // namespace declarations are not plain attributes: set them via the xmlns namespace,
+            // after removing any existing declaration (the serializer derives them from the namespace)
+            element.removeAttribute(name);
+            element.setAttributeNS("http://www.w3.org/2000/xmlns/", name, value);
+        } else {
             element.setAttribute(name, value);
+        }
         return this;
     }
 
@@ -418,6 +444,4 @@ public class XmlElement extends XmlNode {
             throw new RuntimeException(e);
         }
     }
-
-    public XmlElement getParent() { return parent; }
 }

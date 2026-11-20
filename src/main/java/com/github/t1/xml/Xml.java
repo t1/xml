@@ -6,6 +6,8 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.*;
 import java.io.*;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static java.nio.charset.StandardCharsets.*;
 
@@ -22,7 +24,7 @@ public class Xml extends XmlElement {
 
     private static Document newDocument() {
         try {
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            return newDocumentBuilderFactory().newDocumentBuilder().newDocument();
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
         }
@@ -30,8 +32,7 @@ public class Xml extends XmlElement {
 
     public static Xml fromString(String xml) {
         try {
-            Document result = DocumentBuilderFactory
-                    .newInstance()
+            Document result = newDocumentBuilderFactory()
                     .newDocumentBuilder()
                     .parse(new ByteArrayInputStream(xml.getBytes(UTF_8)));
             return new Xml(result);
@@ -46,12 +47,19 @@ public class Xml extends XmlElement {
 
     private static Document loadDocument(URI uri) {
         try {
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(uri.toASCIIString());
+            Document document = newDocumentBuilderFactory().newDocumentBuilder().parse(uri.toASCIIString());
             document.setDocumentURI(uri.toString());
             return document;
         } catch (SAXException | IOException | ParserConfigurationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static DocumentBuilderFactory newDocumentBuilderFactory() {
+        var factory = DocumentBuilderFactory.newInstance();
+        // namespace-aware, so the LS serializer keeps the root element's default xmlns on save
+        factory.setNamespaceAware(true);
+        return factory;
     }
 
     public Xml(Document document) {
@@ -77,6 +85,14 @@ public class Xml extends XmlElement {
     public void save() {
         if (uri() == null)
             throw new IllegalStateException("xml document has no uri save to");
-        serializer().writeToURI(document(), uri().toString());
+        // write to a string first, so we can append the missing nl after the xml-declaration
+        // see https://bugs.openjdk.java.net/browse/JDK-7150637
+        StringWriter out = new StringWriter();
+        writeTo(out);
+        try {
+            Files.writeString(Path.of(uri()), out.toString());
+        } catch (IOException e) {
+            throw new RuntimeException("could not save to " + uri(), e);
+        }
     }
 }

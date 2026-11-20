@@ -9,12 +9,18 @@ public class XmlNode {
     private final XmlElement parent;
     protected final Node node;
 
-    protected Document document() { return node.getOwnerDocument(); }
+    public Document document() { return node.getOwnerDocument(); }
 
     protected Comment createComment(String text) { return document().createComment(" " + text + " "); }
 
     protected Text createText(String text) { return document().createTextNode(text); }
 
-    protected Element createElement(String name) { return document().createElement(name);    }
+    protected Element createElement(String name) {
+        // create in the document's default namespace, so new elements match the existing ones
+        String namespaceURI = node.getOwnerDocument().getDocumentElement().getNamespaceURI();
+        return namespaceURI == null
+            ? document().createElement(name)
+            : document().createElementNS(namespaceURI, name);
+    }
 
 }
