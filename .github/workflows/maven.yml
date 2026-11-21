@@ -20,4 +20,9 @@ jobs:
           java-version: ${{ matrix.jdk }}
           cache: 'maven'
 
+      # pomx extension is not published to Maven Central;
+      # pom.xml is pre-generated and sufficient for building
+      # cheap disable of pomx
+      - run: rm .mvn/extensions.xml
+
       - run: mvn --batch-mode --show-version --no-transfer-progress -DCI=GitHub install
