@@ -30,6 +30,9 @@
         <tag>HEAD</tag>
         <url>https://github.com/t1/${project.artifactId}.git</url>
     </scm>
+    <properties>
+        <lombok.version>1.18.48</lombok.version>
+    </properties>
     <profiles>
         <profile>
             <id>com.github.t1:profile-t1</id>
@@ -96,7 +99,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.48</version>
+                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -224,7 +227,7 @@
                 <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.48</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
                 <dependency>
