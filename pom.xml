@@ -19,7 +19,7 @@
         <maven.compiler.parameters>true</maven.compiler.parameters>
 
         <junit.version>6.1.3</junit.version>
-        <mockito.version>5.24.0</mockito.version>
+        <mockito.version>5.25.0</mockito.version>
         <lombok.version>1.18.48</lombok.version>
     </properties>
 
